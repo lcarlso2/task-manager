@@ -2,17 +2,40 @@
 using todo_api.Data;
 using todo_api.Dtos;
 using todo_api.Entities;
+using todo_api.Enums;
+using todo_api.Shared;
 
 namespace todo_api.Services;
 
 public class TodoService(AppDbContext db) : ITodoService
 {
-    public async Task<List<Todo>> GetAllAsync()
+    public async Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status)
     {
-        return await db.Todos
-            .AsNoTracking()
-            .OrderByDescending(t => t.CreatedAt)
+        var query = db.Todos.AsNoTracking();
+
+        query = status switch
+        {
+            TodoStatusFilter.Active => query.Where(t => !t.IsCompleted),
+            TodoStatusFilter.Completed => query.Where(t => t.IsCompleted),
+            _ => query
+        };
+
+        query = query.OrderByDescending(t => t.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PagedResult<Todo>
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<Todo?> GetByIdAsync(int id)
@@ -21,6 +44,7 @@ public class TodoService(AppDbContext db) : ITodoService
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == id);
     }
+
     public async Task<Todo> CreateAsync(CreateTodoRequest request)
     {
         var todo = new Todo

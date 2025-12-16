@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { useTodos } from "../hooks/useTodos";
 import { TodoItem } from "./TodoItem";
-import type { Todo } from "../types/todo";
+import { PaginationControls } from "./PaginationControls";
+import { PageSizeSelector } from "./PageSizeSelector";
+import type { Filter } from "./FilterBar";
+import { FilterBar } from "./FilterBar";
 
-type Filter = "all" | "active" | "completed";
 
 export function TodoList() {
-  const { data: todos, isLoading, isError, error } = useTodos();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [filter, setFilter] = useState<Filter>("all");
+  const {
+    data: todos,
+    isLoading,
+    isError,
+    error,
+  } = useTodos(page, pageSize, filter);
 
   if (isLoading) {
     return <div>Loading todos…</div>;
@@ -17,77 +26,44 @@ export function TodoList() {
     return <div>Error loading todos: {(error as Error).message}</div>;
   }
 
-  if (!todos || todos.length === 0) {
+  if (!todos || todos.items.length === 0) {
     return <div>No todos yet</div>;
   }
 
-  const filteredTodos = filterTodos(todos, filter);
+  const handleFilterChange = (newFilter: Filter) => {
+    setFilter(newFilter);
+    setPage(1);
+  };
 
   return (
     <section>
-      <FilterBar filter={filter} onChange={setFilter} />
-
-      {filteredTodos.length === 0 ? (
+      <FilterBar filter={filter} onChange={handleFilterChange} />
+      <div className="todo-meta">
+        {todos.totalCount} {filter === "all" ? "todos" : `${filter} todos`}
+      </div>
+      {todos.items.length === 0 ? (
         <div>No todos match this filter</div>
       ) : (
         <ul className="todo-list">
-          {filteredTodos.map((todo) => (
+          {todos.items.map((todo) => (
             <TodoItem key={todo.id} todo={todo} />
           ))}
         </ul>
       )}
+
+      <PaginationControls
+        page={todos.page}
+        totalPages={todos.totalPages}
+        onPageChange={setPage}
+      />
+      <PageSizeSelector
+        value={pageSize}
+        onChange={(size) => {
+          setPageSize(size);
+          setPage(1);
+        }}
+      />
     </section>
   );
 }
 
-function filterTodos(todos: Todo[], filter: Filter): Todo[] {
-  switch (filter) {
-    case "active":
-      return todos.filter((t) => !t.isCompleted);
-    case "completed":
-      return todos.filter((t) => t.isCompleted);
-    default:
-      return todos;
-  }
-}
-
-type FilterBarProps = {
-  filter: Filter;
-  onChange: (filter: Filter) => void;
-};
-
-function FilterBar({ filter, onChange }: FilterBarProps) {
-  return (
-    <div className="filters">
-      <FilterButton
-        label="All"
-        active={filter === "all"}
-        onClick={() => onChange("all")}
-      />
-      <FilterButton
-        label="Active"
-        active={filter === "active"}
-        onClick={() => onChange("active")}
-      />
-      <FilterButton
-        label="Completed"
-        active={filter === "completed"}
-        onClick={() => onChange("completed")}
-      />
-    </div>
-  );
-}
-
-type FilterButtonProps = {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-};
-
-function FilterButton({ label, active, onClick }: FilterButtonProps) {
-  return (
-    <button onClick={onClick} disabled={active} aria-pressed={active}>
-      {label}
-    </button>
-  );
-}

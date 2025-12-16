@@ -1,15 +1,21 @@
 ﻿using todo_api.Dtos;
 using todo_api.Entities;
+using todo_api.Enums;
+using todo_api.Shared;
 
 namespace todo_api.Services
 {
     public interface ITodoService
     {
+     
         /// <summary>
-        /// Get all todos.
+        /// Get alls todos based on filter params
         /// </summary>
-        /// <returns>List of Todo</returns>
-        Task<List<Todo>> GetAllAsync();
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Page size</param>
+        /// <param name="status">Status of todo</param>
+        /// <returns></returns>
+        Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status);
 
         /// <summary>
         /// Get a single todo by id.

@@ -1,9 +1,10 @@
 import type { Todo } from "../types/todo";
+import type { PagedResult } from "../types/pagedresult";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function fetchTodos(): Promise<Todo[]> {
-  const response = await fetch(`${API_BASE_URL}/todos`);
+export async function fetchTodos(page: number, pageSize: number, filter: "all" | "active" | "completed"): Promise<PagedResult<Todo>> {
+  const response = await fetch(`${API_BASE_URL}/todos?page=${page}&pageSize=${pageSize}&status=${filter}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch todos");

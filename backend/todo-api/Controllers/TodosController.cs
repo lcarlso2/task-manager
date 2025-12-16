@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using todo_api.Dtos;
+using todo_api.Enums;
 using todo_api.Mapping;
 using todo_api.Services;
+using todo_api.Shared;
 
 namespace todo_api.Controllers;
 
@@ -12,10 +14,25 @@ public class TodosController(ITodoService todoService) : ControllerBase
 
     // GET /api/todos
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TodoResponse>>> GetAll()
+    public async Task<ActionResult<PagedResult<TodoResponse>>> GetAll(
+      [FromQuery] int page = 1,
+      [FromQuery] int pageSize = 20,
+      [FromQuery] TodoStatusFilter status = TodoStatusFilter.All)
     {
-        var todos = await todoService.GetAllAsync();
-        return Ok(todos.Select(t => t.ToResponse()));
+        if (page < 1 || pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest("Invalid pagination parameters");
+        }
+
+        var result = await todoService.GetAllAsync(page, pageSize, status);
+
+        return Ok(new PagedResult<TodoResponse>
+        {
+            Items = [.. result.Items.Select(x => x.ToResponse())],
+            Page = result.Page,
+            PageSize = result.PageSize,
+            TotalCount = result.TotalCount
+        });
     }
 
     // GET /api/todos/{id}
