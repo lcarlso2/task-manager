@@ -130,7 +130,7 @@ export function TodoItem({ todo }: Props) {
               }
             }}
             disabled={
-              deleteTodo.isPending || updateTodo.isPending || todo.isCompleted
+              isLocked
             }
           >
             Delete
