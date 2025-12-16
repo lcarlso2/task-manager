@@ -33,7 +33,7 @@ The focus is on clean architecture, predictable data flow, and a realistic user 
 
 ## Backend Setup
 
-cd backend  
+cd backend\todo-api  
 dotnet restore  
 dotnet ef database update  
 dotnet run --launch-profile https
@@ -63,8 +63,10 @@ Frontend runs at http://localhost:5173
 - Inline editing of todo titles
 - Optimistic UI updates for create, update, and delete, with cache invalidation to ensure the backend remains the source of truth
 - Clear loading, error, and empty states
-- Completed todos are treated as final:
-  - Editing and deletion are disabled once a todo is completed
+- Completed todos are read-only in the UI to prevent accidental changes
+  - Editing and deletion are disabled while a todo is completed
+  - Completed todos may be reopened, after which they can be edited or deleted again
+  - In a production system, this rule could be enforced at the API level or replaced with an archival workflow
 - Server-side pagination, filtering, and sorting to support scalability
 
 ---
@@ -117,6 +119,8 @@ Endpoints:
 - Improve accessibility and keyboard navigation
 - Add frontend tests for critical user flows
 - Replace browser confirm dialogs with inline confirmations or toasts
+- Sync pagination and filter state to the URL to support refresh and deep linking
+- Introduce authentication and per-user todo ownership when moving beyond a single-user MVP
 
 ---
 
