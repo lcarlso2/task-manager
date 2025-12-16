@@ -113,8 +113,6 @@ Endpoints:
 
 ## What I’d Do Next
 
-- Add filtering (Active / Completed)
-- Add pagination for large todo lists
 - Improve accessibility and keyboard navigation
 - Add frontend tests for critical user flows
 - Replace browser confirm dialogs with inline confirmations or toasts
