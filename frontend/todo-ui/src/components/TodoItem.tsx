@@ -86,13 +86,18 @@ export function TodoItem({ todo }: Props) {
           />
 
           <button
+            className="btn btn-secondary"
             onClick={handleSave}
             disabled={updateTodo.isPending || !title.trim()}
           >
             Save
           </button>
 
-          <button onClick={handleCancel} disabled={updateTodo.isPending}>
+          <button
+            className="btn btn-secondary"
+            onClick={handleCancel}
+            disabled={updateTodo.isPending}
+          >
             Cancel
           </button>
 
@@ -118,6 +123,7 @@ export function TodoItem({ todo }: Props) {
             {updateTodo.isPending && <span className="saving"> Saving…</span>}
           </span>
           <button
+            className="btn btn-danger"
             onClick={() => {
               if (confirm("Delete this todo?")) {
                 deleteTodo.mutate(todo.id);

@@ -33,3 +33,87 @@
   font-size: 0.8rem;
   opacity: 0.7;
 }
+
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.create-todo {
+  margin-bottom: 1rem;
+}
+
+.btn {
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  padding: 0.35em 0.7em;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background-color: #1a1a1a;
+  color: inherit;
+  transition: border-color 0.25s, background-color 0.2s;
+}
+
+.btn:hover {
+  border-color: #646cff;
+}
+
+.btn:focus,
+.btn:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  color: white;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+}
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-secondary {
+  background-color: #374151;
+}
+.btn-secondary:hover {
+  background-color: #1f2937;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+}
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+.todo-item .btn {
+  margin-left: 0.25rem;
+}
+
+.btn-filter {
+  background-color: transparent;
+  border: 1px solid #4b5563;
+}
+
+.btn-filter:hover {
+  border-color: #646cff; 
+}
+
+.btn-filter[disabled] {
+  background-color: #4b5563;
+  color: white;
+  cursor: default;
+}
