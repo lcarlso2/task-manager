@@ -1,10 +1,8 @@
 import { useTodos } from "../hooks/useTodos";
-import { useUpdateTodo } from "../hooks/useUpdateTodo";
+import { TodoItem } from "./TodoItem";
 
 export function TodoList() {
   const { data, isLoading, error } = useTodos();
-  const toggleTodo = useUpdateTodo();
-
   if (isLoading) return <p>Loading todos...</p>;
   if (error) return <p>Failed to load todos</p>;
   if (!data || data.length === 0) return <p>No todos yet</p>;
@@ -12,19 +10,7 @@ export function TodoList() {
   return (
     <ul>
       {data.map((todo) => (
-        <li key={todo.id}>
-          <input
-            type="checkbox"
-            checked={todo.isCompleted}
-            onChange={() =>
-              toggleTodo.mutate({
-                ...todo,
-                isCompleted: !todo.isCompleted,
-              })
-            }
-          />
-          <span style={{ marginLeft: 8 }}>{todo.title}</span>
-        </li>
+        <TodoItem key={todo.id} todo={todo} />
       ))}
     </ul>
   );
