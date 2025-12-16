@@ -5,5 +5,6 @@ export function useTodos() {
   return useQuery({
     queryKey: ["todos"],
     queryFn: fetchTodos,
+    staleTime: 30_000
   });
 }
