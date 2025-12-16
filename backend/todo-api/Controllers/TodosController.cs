@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using todo_api.Dtos;
+using todo_api.Entities;
 using todo_api.Enums;
 using todo_api.Mapping;
 using todo_api.Services;
@@ -67,7 +68,7 @@ public class TodosController(ITodoService todoService) : ControllerBase
         if (!updated)
             return NotFound();
 
-        return NoContent();
+        return Ok(updated);
     }
 
     // DELETE /api/todos/{id}
