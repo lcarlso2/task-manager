@@ -13,14 +13,16 @@ export function CreateTodo() {
     setTitle("");
   }
 
+  const isValid = title.trim().length > 0;
+
   return (
     <form onSubmit={handleSubmit}>
       <input
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
         placeholder="New todo"
       />
-      <button type="submit" disabled={createTodo.isPending}>
+      <button type="submit" disabled={!isValid || createTodo.isPending}>
         Add
       </button>
     </form>

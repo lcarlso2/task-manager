@@ -20,7 +20,7 @@ export function useCreateTodo() {
         createdAt: new Date().toISOString(),
       };
 
-      queryClient.setQueryData<Todo[]>(["todos"], old => [
+      queryClient.setQueryData<Todo[]>(["todos"], (old) => [
         ...(old ?? []),
         optimisticTodo,
       ]);
