@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Todo } from "../types/todo";
 import { useUpdateTodo } from "../hooks/useUpdateTodo";
+import { useDeleteTodo } from "../hooks/useDeleteTodo";
 
 type Props = {
   todo: Todo;
@@ -13,8 +14,11 @@ export function TodoItem({ todo }: Props) {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const updateTodo = useUpdateTodo();
+  const deleteTodo = useDeleteTodo();
 
-  // Autofocus when entering edit mode
+  const isLocked =
+    todo.isCompleted || updateTodo.isPending || deleteTodo.isPending;
+
   useEffect(() => {
     if (isEditing) {
       setError(null);
@@ -95,19 +99,37 @@ export function TodoItem({ todo }: Props) {
           {error && <div className="error">{error}</div>}
         </div>
       ) : (
-        <span
-          className="todo-title"
-          onClick={() => setIsEditing(true)}
-          title="Click to edit"
-          style={{
-            textDecoration: todo.isCompleted ? "line-through" : "none",
-            cursor: "pointer",
-            opacity: updateTodo.isPending ? 0.6 : 1,
-          }}
-        >
-          {todo.title}
-          {updateTodo.isPending && <span className="saving"> Saving…</span>}
-        </span>
+        <>
+          <span
+            className="todo-title"
+            onClick={() => {
+              if (!isLocked) {
+                setIsEditing(true);
+              }
+            }}
+            title="Click to edit"
+            style={{
+              textDecoration: todo.isCompleted ? "line-through" : "none",
+              cursor: "pointer",
+              opacity: updateTodo.isPending ? 0.6 : 1,
+            }}
+          >
+            {todo.title}
+            {updateTodo.isPending && <span className="saving"> Saving…</span>}
+          </span>
+          <button
+            onClick={() => {
+              if (confirm("Delete this todo?")) {
+                deleteTodo.mutate(todo.id);
+              }
+            }}
+            disabled={
+              deleteTodo.isPending || updateTodo.isPending || todo.isCompleted
+            }
+          >
+            Delete
+          </button>
+        </>
       )}
     </li>
   );

@@ -33,3 +33,13 @@ export async function updateTodo(todo: Todo): Promise<Todo> {
   if (!response.ok) throw new Error("Failed to update todo");
   return response.json();
 }
+
+export async function deleteTodo(id: number): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete todo");
+  }
+}
