@@ -36,7 +36,7 @@ The focus is on clean architecture, predictable data flow, and a realistic user 
 cd backend  
 dotnet restore  
 dotnet ef database update  
-dotnet run  
+dotnet run --launch-profile https
 
 API runs at https://localhost:7206  
 Swagger UI available at https://localhost:7206/swagger  
