@@ -61,10 +61,11 @@ Frontend runs at http://localhost:5173
 
 - Create, read, update, and delete todos
 - Inline editing of todo titles
-- Optimistic UI updates for create, update, and delete
+- Optimistic UI updates for create, update, and delete, with cache invalidation to ensure the backend remains the source of truth
 - Clear loading, error, and empty states
 - Completed todos are treated as final:
   - Editing and deletion are disabled once a todo is completed
+- Server-side pagination, filtering, and sorting to support scalability
 
 ---
 
@@ -88,7 +89,7 @@ Key decisions:
 - Centralized, consistent error responses
 
 Endpoints:
-- GET /todos
+- GET /todos supports pagination, filtering, and sorting via query parameters
 - POST /todos
 - PUT /todos/{id}
 - DELETE /todos/{id}
@@ -97,14 +98,14 @@ Endpoints:
 
 ## Testing
 
-- Includes an integration test covering core API behavior
+- Includes an integration test validating core API behavior (end-to-end request handling, persistence, and response contracts)
 - SQLite with migrations is used instead of an in-memory database to ensure reproducibility
 
 ---
 
 ## Assumptions & Trade-offs
 
-- Authentication and authorization are out of scope
+- Authentication and authorization are out of scope to keep the focus on API design, validation, and frontend/backend interaction.
 - Styling is intentionally minimal to focus on behavior and architecture
 - PUT is used for updates instead of PATCH for simplicity
 - Completed todos are immutable by design to provide a clearer UX
