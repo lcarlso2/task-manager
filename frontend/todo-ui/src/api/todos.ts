@@ -1,9 +1,10 @@
 import type { Todo } from "../types/todo";
-import type { PagedResult } from "../types/pagedresult";
+import type { PagedResult } from "../types/pagedResult";
+import type { Filter } from "../components/FilterBar";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function fetchTodos(page: number, pageSize: number, filter: "all" | "active" | "completed"): Promise<PagedResult<Todo>> {
+export async function fetchTodos(page: number, pageSize: number, filter: Filter): Promise<PagedResult<Todo>> {
   const response = await fetch(`${API_BASE_URL}/todos?page=${page}&pageSize=${pageSize}&status=${filter}`);
 
   if (!response.ok) {
