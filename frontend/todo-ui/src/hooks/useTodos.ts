@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchTodos } from "../api/todos";
-import type { Filter } from "../components/FilterBar";
+import type { Filter } from "../types/filter";
 
 export function useTodos(page: number, pageSize: number, filter: Filter) {
   return useQuery({

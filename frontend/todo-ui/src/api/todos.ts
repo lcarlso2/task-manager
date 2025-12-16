@@ -1,6 +1,6 @@
 import type { Todo } from "../types/todo";
 import type { PagedResult } from "../types/pagedResult";
-import type { Filter } from "../components/FilterBar";
+import type { Filter } from "../types/filter";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

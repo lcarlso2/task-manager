@@ -1,4 +1,4 @@
-export type Filter = "all" | "active" | "completed";
+import { FILTERS, type Filter } from "../types/filter";
 
 type FilterBarProps = {
   filter: Filter;
@@ -10,18 +10,18 @@ export function FilterBar({ filter, onChange }: FilterBarProps) {
     <div className="filters">
       <FilterButton
         label="All"
-        active={filter === "all"}
-        onClick={() => onChange("all")}
+        active={filter === FILTERS.ALL}
+        onClick={() => onChange(FILTERS.ALL)}
       />
       <FilterButton
         label="Active"
-        active={filter === "active"}
-        onClick={() => onChange("active")}
+        active={filter === FILTERS.ACTIVE}
+        onClick={() => onChange(FILTERS.ACTIVE)}
       />
       <FilterButton
         label="Completed"
-        active={filter === "completed"}
-        onClick={() => onChange("completed")}
+        active={filter === FILTERS.COMPLETED}
+        onClick={() => onChange(FILTERS.COMPLETED)}
       />
     </div>
   );

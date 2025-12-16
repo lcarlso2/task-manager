@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { useTodos } from "../hooks/useTodos";
-import { TodoItem } from "./TodoItem";
-import { PaginationControls } from "./PaginationControls";
-import { PageSizeSelector } from "./PageSizeSelector";
-import type { Filter } from "./FilterBar";
-import { FilterBar } from "./FilterBar";
-
+import {
+  TodoItem,
+  PaginationControls,
+  PageSizeSelector,
+  FilterBar,
+} from "../components";
+import { FILTERS, type Filter } from "../types/filter";
+import { useTodos } from "../hooks";
 
 export function TodoList() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [filter, setFilter] = useState<Filter>("all");
+  const [filter, setFilter] = useState<Filter>(FILTERS.ALL);
   const {
     data: todos,
     isLoading,
@@ -39,7 +40,8 @@ export function TodoList() {
     <section>
       <FilterBar filter={filter} onChange={handleFilterChange} />
       <div className="todo-meta">
-        {todos.totalCount} {filter === "all" ? "todos" : `${filter} todos`}
+        {todos.totalCount}{" "}
+        {filter === FILTERS.ALL ? "Todos" : `${filter} Todos`}
       </div>
       {todos.items.length === 0 ? (
         <div>No todos match this filter</div>
@@ -66,4 +68,3 @@ export function TodoList() {
     </section>
   );
 }
-

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCreateTodo } from "../hooks/useCreateTodo";
+import { useCreateTodo } from "../hooks";
 
 export function CreateTodo() {
   const [title, setTitle] = useState("");

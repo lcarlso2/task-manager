@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Todo } from "../types/todo";
-import { useUpdateTodo } from "../hooks/useUpdateTodo";
-import { useDeleteTodo } from "../hooks/useDeleteTodo";
+import { useDeleteTodo, useUpdateTodo } from "../hooks";
 
 type Props = {
   todo: Todo;
@@ -129,9 +128,7 @@ export function TodoItem({ todo }: Props) {
                 deleteTodo.mutate(todo.id);
               }
             }}
-            disabled={
-              isLocked
-            }
+            disabled={isLocked}
           >
             Delete
           </button>
