@@ -12,7 +12,6 @@ export async function fetchTodos(): Promise<Todo[]> {
   return response.json();
 }
 
-
 export async function createTodo(title: string): Promise<Todo> {
   const response = await fetch(`${API_BASE_URL}/todos`, {
     method: "POST",
@@ -21,5 +20,16 @@ export async function createTodo(title: string): Promise<Todo> {
   });
 
   if (!response.ok) throw new Error("Failed to create todo");
+  return response.json();
+}
+
+export async function updateTodo(todo: Todo): Promise<Todo> {
+  const response = await fetch(`${API_BASE_URL}/todos/${todo.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(todo),
+  });
+
+  if (!response.ok) throw new Error("Failed to update todo");
   return response.json();
 }
