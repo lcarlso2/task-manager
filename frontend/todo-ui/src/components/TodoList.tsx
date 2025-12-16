@@ -1,5 +1,5 @@
 import { useTodos } from "../hooks/useTodos";
-import { useUpdateTodo } from "../hooks/useToggleTodo";
+import { useUpdateTodo } from "../hooks/useUpdateTodo";
 
 export function TodoList() {
   const { data, isLoading, error } = useTodos();
