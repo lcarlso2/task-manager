@@ -81,6 +81,11 @@ Key decisions:
 - Cache invalidation after mutations to keep the backend as the source of truth
 - No manual syncing of server data into local React state
 
+### Optimistic Updates & Interaction Locking
+
+Create, update, and delete operations apply optimistic updates so changes appear immediately in the UI.
+While a mutation is in flight, only conflicting interactions (such as saving the same todo twice) are temporarily disabled to avoid overlapping writes and race conditions, since mutations are not cancelable by default.
+
 ---
 
 ## API Design
