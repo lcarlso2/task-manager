@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using todo_api.Data;
+using todo_api.Middleware;
 using todo_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
