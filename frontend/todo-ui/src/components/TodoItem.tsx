@@ -18,15 +18,14 @@ export function TodoItem({ todo }: Props) {
   const isUpdating = updateTodo.isPending;
   const isDeleting = deleteTodo.isPending;
 
-  const isLocked = todo.isCompleted || isUpdating || isDeleting;
+  const isMutating = isUpdating || isDeleting;
+  const isEditingLocked = todo.isCompleted || isMutating;
 
   useEffect(() => {
     if (isEditing) {
-      setError(null);
-      setTitle(todo.title);
       requestAnimationFrame(() => inputRef.current?.focus());
     }
-  }, [isEditing, todo.title]);
+  }, [isEditing]);
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -61,11 +60,24 @@ export function TodoItem({ todo }: Props) {
     }
   };
 
+  const startEditing = () => {
+    if (isEditingLocked) return;
+
+    setError(null);
+    setTitle(todo.title);
+    setIsEditing(true);
+  };
+
+  const handleDelete = () => {
+    if (!confirm("Delete this todo?")) return;
+    deleteTodo.mutate(todo.id);
+  };
+
   return (
     <li
       className="todo-item"
       style={{
-        opacity: isUpdating || isDeleting ? 0.85 : 1,
+        opacity: isMutating ? 0.85 : 1,
         transition: "opacity 120ms ease-in-out",
       }}
     >
@@ -114,15 +126,11 @@ export function TodoItem({ todo }: Props) {
           <>
             <span
               className="todo-title"
-              onClick={() => {
-                if (!isLocked) {
-                  setIsEditing(true);
-                }
-              }}
+              onClick={startEditing}
               title="Click to edit"
               style={{
                 textDecoration: todo.isCompleted ? "line-through" : "none",
-                cursor: isLocked ? "default" : "pointer",
+                cursor: isEditingLocked ? "default" : "pointer",
               }}
             >
               {todo.title}
@@ -130,12 +138,8 @@ export function TodoItem({ todo }: Props) {
 
             <button
               className="btn btn-icon"
-              onClick={() => {
-                if (confirm("Delete this todo?")) {
-                  deleteTodo.mutate(todo.id);
-                }
-              }}
-              disabled={isLocked}
+              onClick={handleDelete}
+              disabled={isEditingLocked}
               aria-label="Delete todo"
               title="Delete"
             >
