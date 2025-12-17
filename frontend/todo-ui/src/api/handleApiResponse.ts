@@ -1,4 +1,3 @@
-// src/api/handleApiResponse.ts
 import type { ApiError } from "../types/apiError";
 
 export async function handleApiResponse<T>(response: Response): Promise<T> {
