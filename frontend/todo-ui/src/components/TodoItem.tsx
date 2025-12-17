@@ -12,19 +12,19 @@ export function TodoItem({ todo }: Props) {
   const [title, setTitle] = useState(todo.title);
   const [error, setError] = useState<string | null>(null);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const updateTodo = useUpdateTodo();
   const deleteTodo = useDeleteTodo();
 
   const isUpdating = updateTodo.isPending;
   const isDeleting = deleteTodo.isPending;
-
   const isMutating = isUpdating || isDeleting;
+
   const isEditingLocked = todo.isCompleted || isMutating;
 
   useEffect(() => {
     if (isEditing) {
-      requestAnimationFrame(() => inputRef.current?.focus());
+      requestAnimationFrame(() => textareaRef.current?.focus());
     }
   }, [isEditing]);
 
@@ -40,7 +40,7 @@ export function TodoItem({ todo }: Props) {
         onSuccess: () => setIsEditing(false),
         onError: (err: unknown) => {
           setError(getApiErrorMessage(err));
-          requestAnimationFrame(() => inputRef.current?.focus());
+          requestAnimationFrame(() => textareaRef.current?.focus());
         },
       }
     );
@@ -52,10 +52,11 @@ export function TodoItem({ todo }: Props) {
     setIsEditing(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSave();
+      return;
     }
 
     if (e.key === "Escape") {
@@ -66,7 +67,6 @@ export function TodoItem({ todo }: Props) {
 
   const startEditing = () => {
     if (isEditingLocked) return;
-
     setError(null);
     setTitle(todo.title);
     setIsEditing(true);
@@ -96,85 +96,96 @@ export function TodoItem({ todo }: Props) {
           })
         }
       />
-      <div className="todo-content">
-        {isEditing ? (
-          <div className="edit-row">
-            <input
-              ref={inputRef}
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                if (error) setError(null);
-              }}
-              onKeyDown={handleKeyDown}
-              disabled={isUpdating}
-              maxLength={200}
-              aria-invalid={!!error}
-              aria-describedby={error ? "todo-item-error" : undefined}
-            />
 
-            <button
-              className="btn btn-secondary"
-              onClick={handleSave}
-              disabled={isUpdating || !title.trim()}
-            >
-              Save
-            </button>
+      <div className="todo-body">
+        <div className="todo-content">
+          <div className="todo-main">
+            {isEditing ? (
+              <textarea
+                ref={textareaRef}
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (error) setError(null);
+                }}
+                onKeyDown={handleKeyDown}
+                disabled={isUpdating}
+                rows={4}
+                maxLength={200}
+                aria-invalid={!!error}
+                aria-describedby={error ? "todo-item-error" : undefined}
+              />
+            ) : (
+              <span
+                className="todo-title"
+                onClick={startEditing}
+                title={todo.title}
+                style={{
+                  textDecoration: todo.isCompleted ? "line-through" : "none",
+                  cursor: isEditingLocked ? "default" : "pointer",
+                }}
+              >
+                {todo.title}
+              </span>
+            )}
+          </div>
 
-            <button
-              className="btn btn-secondary"
-              onClick={handleCancel}
-              disabled={isUpdating}
-            >
-              Cancel
-            </button>
+          {!isEditing && (
+            <div className="todo-actions">
+              <button
+                className="btn btn-icon"
+                onClick={handleDelete}
+                disabled={isEditingLocked}
+                aria-label="Delete todo"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
 
+        {isEditing && (
+          <div className="todo-edit-footer">
             {error && (
               <div id="todo-item-error" className="error">
                 {error}
               </div>
             )}
-          </div>
-        ) : (
-          <>
-            <span
-              className="todo-title"
-              onClick={startEditing}
-              title="Click to edit"
-              style={{
-                textDecoration: todo.isCompleted ? "line-through" : "none",
-                cursor: isEditingLocked ? "default" : "pointer",
-              }}
-            >
-              {todo.title}
-            </span>
 
-            <button
-              className="btn btn-icon"
-              onClick={handleDelete}
-              disabled={isEditingLocked}
-              aria-label="Delete todo"
-              title="Delete"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+            <div className="todo-edit-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={handleSave}
+                disabled={isUpdating || !title.trim()}
               >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                <path d="M10 11v6" />
-                <path d="M14 11v6" />
-                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-              </svg>
-            </button>
-          </>
+                Save
+              </button>
+
+              <button
+                className="btn btn-secondary"
+                onClick={handleCancel}
+                disabled={isUpdating}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </li>
