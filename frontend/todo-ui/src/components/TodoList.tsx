@@ -8,10 +8,20 @@ import {
 import { FILTERS, type Filter } from "../types/filter";
 import { useTodos } from "../hooks";
 
-export function TodoList() {
-  const [page, setPage] = useState(1);
+type TodoListProps = {
+  filter: Filter;
+  onFilterChange: (filter: Filter) => void;
+  page: number;
+  onPageChange: (page: number) => void;
+};
+
+export function TodoList({
+  filter,
+  onFilterChange,
+  page,
+  onPageChange,
+}: TodoListProps) {
   const [pageSize, setPageSize] = useState(20);
-  const [filter, setFilter] = useState<Filter>(FILTERS.ALL);
 
   const {
     data: todos,
@@ -21,8 +31,7 @@ export function TodoList() {
   } = useTodos(page, pageSize, filter);
 
   const handleFilterChange = (newFilter: Filter) => {
-    setFilter(newFilter);
-    setPage(1);
+    onFilterChange(newFilter);
   };
 
   const isInitialLoad = isLoading && !todos;
@@ -76,14 +85,14 @@ export function TodoList() {
               <PaginationControls
                 page={todos.page}
                 totalPages={todos.totalPages}
-                onPageChange={setPage}
+                onPageChange={onPageChange}
               />
 
               <PageSizeSelector
                 value={pageSize}
                 onChange={(size) => {
                   setPageSize(size);
-                  setPage(1);
+                  onPageChange(1);
                 }}
               />
             </div>

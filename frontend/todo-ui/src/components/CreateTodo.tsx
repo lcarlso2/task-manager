@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useCreateTodo } from "../hooks";
 
-export function CreateTodo() {
+type CreateTodoProps = {
+  onCreated?: () => void;
+};
+
+export function CreateTodo({ onCreated }: CreateTodoProps) {
   const [title, setTitle] = useState("");
   const createTodo = useCreateTodo();
 
@@ -9,11 +13,14 @@ export function CreateTodo() {
     e.preventDefault();
     if (!title.trim()) return;
 
-    createTodo.mutate(title);
+    createTodo.mutate(title, {
+      onSuccess: () => {
+        onCreated?.();
+      },
+    });
+
     setTitle("");
   }
-
-  const isValid = title.trim().length > 0;
 
   return (
     <form className="create-todo" onSubmit={handleSubmit}>
@@ -25,7 +32,7 @@ export function CreateTodo() {
       <button
         className="btn btn-primary"
         type="submit"
-        disabled={!isValid || createTodo.isPending}
+        disabled={!title.trim() || createTodo.isPending}
       >
         Add
       </button>
