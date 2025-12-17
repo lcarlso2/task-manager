@@ -7,5 +7,6 @@ export function useTodos(page: number, pageSize: number, filter: Filter) {
     queryKey: ["todos", page, pageSize, filter],
     queryFn: () => fetchTodos(page, pageSize, filter),
     staleTime: 30_000,
+    placeholderData: (previousData) => previousData,
   });
 }
