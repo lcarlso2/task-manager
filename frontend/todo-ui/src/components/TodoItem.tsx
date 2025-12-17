@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Todo } from "../types/todo";
 import { useDeleteTodo, useUpdateTodo } from "../hooks";
+import { getApiErrorMessage } from "../utils/apiErrors";
 
 type Props = {
   todo: Todo;
@@ -37,7 +38,10 @@ export function TodoItem({ todo }: Props) {
       { ...todo, title: title.trim() },
       {
         onSuccess: () => setIsEditing(false),
-        onError: () => setError("Failed to save changes"),
+        onError: (err: unknown) => {
+          setError(getApiErrorMessage(err));
+          requestAnimationFrame(() => inputRef.current?.focus());
+        },
       }
     );
   };
@@ -98,10 +102,15 @@ export function TodoItem({ todo }: Props) {
             <input
               ref={inputRef}
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (error) setError(null);
+              }}
               onKeyDown={handleKeyDown}
               disabled={isUpdating}
+              maxLength={200}
               aria-invalid={!!error}
+              aria-describedby={error ? "todo-item-error" : undefined}
             />
 
             <button
@@ -120,7 +129,11 @@ export function TodoItem({ todo }: Props) {
               Cancel
             </button>
 
-            {error && <div className="error">{error}</div>}
+            {error && (
+              <div id="todo-item-error" className="error">
+                {error}
+              </div>
+            )}
           </div>
         ) : (
           <>

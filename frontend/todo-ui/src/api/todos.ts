@@ -1,17 +1,20 @@
 import type { Todo } from "../types/todo";
 import type { PagedResult } from "../types/pagedResult";
 import type { Filter } from "../types/filter";
+import { handleApiResponse } from "./handleApiResponse";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function fetchTodos(page: number, pageSize: number, filter: Filter): Promise<PagedResult<Todo>> {
-  const response = await fetch(`${API_BASE_URL}/todos?page=${page}&pageSize=${pageSize}&status=${filter}`);
+export async function fetchTodos(
+  page: number,
+  pageSize: number,
+  filter: Filter
+): Promise<PagedResult<Todo>> {
+  const response = await fetch(
+    `${API_BASE_URL}/todos?page=${page}&pageSize=${pageSize}&status=${filter}`
+  );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch todos");
-  }
-
-  return response.json();
+  return handleApiResponse(response);
 }
 
 export async function createTodo(title: string): Promise<Todo> {
@@ -21,8 +24,7 @@ export async function createTodo(title: string): Promise<Todo> {
     body: JSON.stringify({ title }),
   });
 
-  if (!response.ok) throw new Error("Failed to create todo");
-  return response.json();
+  return handleApiResponse(response);
 }
 
 export async function updateTodo(todo: Todo): Promise<Todo> {
@@ -32,8 +34,7 @@ export async function updateTodo(todo: Todo): Promise<Todo> {
     body: JSON.stringify(todo),
   });
 
-  if (!response.ok) throw new Error("Failed to update todo");
-  return response.json();
+  return handleApiResponse(response);
 }
 
 export async function deleteTodo(id: number): Promise<void> {
@@ -42,6 +43,6 @@ export async function deleteTodo(id: number): Promise<void> {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to delete todo");
+    await handleApiResponse(response);
   }
 }

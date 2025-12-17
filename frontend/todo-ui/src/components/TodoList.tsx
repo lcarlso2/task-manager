@@ -42,7 +42,7 @@ export function TodoList({
   } else if (isError) {
     console.error(error);
     panelBody = (
-      <div className="error-state">
+      <div className="error">
         Something went wrong while loading your todos.
         <br />
         Please try again.
