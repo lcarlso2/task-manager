@@ -15,8 +15,10 @@ export function TodoItem({ todo }: Props) {
   const updateTodo = useUpdateTodo();
   const deleteTodo = useDeleteTodo();
 
-  const isLocked =
-    todo.isCompleted || updateTodo.isPending || deleteTodo.isPending;
+  const isUpdating = updateTodo.isPending;
+  const isDeleting = deleteTodo.isPending;
+
+  const isLocked = todo.isCompleted || isUpdating || isDeleting;
 
   useEffect(() => {
     if (isEditing) {
@@ -60,11 +62,17 @@ export function TodoItem({ todo }: Props) {
   };
 
   return (
-    <li className="todo-item">
+    <li
+      className="todo-item"
+      style={{
+        opacity: isUpdating || isDeleting ? 0.85 : 1,
+        transition: "opacity 120ms ease-in-out",
+      }}
+    >
       <input
         type="checkbox"
         checked={todo.isCompleted}
-        disabled={updateTodo.isPending}
+        disabled={isUpdating}
         onChange={() =>
           updateTodo.mutate({
             ...todo,
@@ -72,68 +80,86 @@ export function TodoItem({ todo }: Props) {
           })
         }
       />
+      <div className="todo-content">
+        {isEditing ? (
+          <div className="edit-row">
+            <input
+              ref={inputRef}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={isUpdating}
+              aria-invalid={!!error}
+            />
 
-      {isEditing ? (
-        <div className="edit-row">
-          <input
-            ref={inputRef}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={handleKeyDown}
-            disabled={updateTodo.isPending}
-            aria-invalid={!!error}
-          />
+            <button
+              className="btn btn-secondary"
+              onClick={handleSave}
+              disabled={isUpdating || !title.trim()}
+            >
+              Save
+            </button>
 
-          <button
-            className="btn btn-secondary"
-            onClick={handleSave}
-            disabled={updateTodo.isPending || !title.trim()}
-          >
-            Save
-          </button>
+            <button
+              className="btn btn-secondary"
+              onClick={handleCancel}
+              disabled={isUpdating}
+            >
+              Cancel
+            </button>
 
-          <button
-            className="btn btn-secondary"
-            onClick={handleCancel}
-            disabled={updateTodo.isPending}
-          >
-            Cancel
-          </button>
+            {error && <div className="error">{error}</div>}
+          </div>
+        ) : (
+          <>
+            <span
+              className="todo-title"
+              onClick={() => {
+                if (!isLocked) {
+                  setIsEditing(true);
+                }
+              }}
+              title="Click to edit"
+              style={{
+                textDecoration: todo.isCompleted ? "line-through" : "none",
+                cursor: isLocked ? "default" : "pointer",
+              }}
+            >
+              {todo.title}
+            </span>
 
-          {error && <div className="error">{error}</div>}
-        </div>
-      ) : (
-        <>
-          <span
-            className="todo-title"
-            onClick={() => {
-              if (!isLocked) {
-                setIsEditing(true);
-              }
-            }}
-            title="Click to edit"
-            style={{
-              textDecoration: todo.isCompleted ? "line-through" : "none",
-              cursor: "pointer",
-              opacity: updateTodo.isPending ? 0.6 : 1,
-            }}
-          >
-            {todo.title}
-            {updateTodo.isPending && <span className="saving"> Saving…</span>}
-          </span>
-          <button
-            className="btn btn-danger"
-            onClick={() => {
-              if (confirm("Delete this todo?")) {
-                deleteTodo.mutate(todo.id);
-              }
-            }}
-            disabled={isLocked}
-          >
-            Delete
-          </button>
-        </>
-      )}
+            <button
+              className="btn btn-icon"
+              onClick={() => {
+                if (confirm("Delete this todo?")) {
+                  deleteTodo.mutate(todo.id);
+                }
+              }}
+              disabled={isLocked}
+              aria-label="Delete todo"
+              title="Delete"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              </svg>
+            </button>
+          </>
+        )}
+      </div>
     </li>
   );
 }
