@@ -33,7 +33,7 @@ public class TodosController(ITodoService todoService) : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
         [FromQuery] TodoStatusFilter status = TodoStatusFilter.All,
-        [FromQuery] TodoSortFilter sort = TodoSortFilter.CreatedAsc)
+        [FromQuery] TodoSortFilter sort = TodoSortFilter.CreatedDesc)
     {
         if (!PaginationRules.IsValid(page, pageSize))
         {
