@@ -22,9 +22,9 @@ public class TodoService(AppDbContext db) : ITodoService
 
         query = sort switch
         {
-            TodoSortFilter.CreatedAsc => query.OrderBy(t => t.CreatedAt),
-            TodoSortFilter.TitleAsc => query.OrderBy(t => t.Title),
-            _ => query.OrderByDescending(t => t.CreatedAt)
+            TodoSortFilter.CreatedAsc => query.OrderBy(t => t.CreatedAt).ThenBy(t => t.Id),
+            TodoSortFilter.TitleAsc => query.OrderBy(t => t.Title).ThenBy(t => t.Id),
+            _ => query.OrderByDescending(t => t.CreatedAt).ThenByDescending(t => t.Id)
         };
 
         var totalCount = await query.CountAsync();
@@ -77,14 +77,14 @@ public class TodoService(AppDbContext db) : ITodoService
         return todo;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<Todo?> DeleteAsync(int id)
     {
         var todo = await db.Todos.FindAsync(id);
         if (todo is null)
-            return false;
+            return null;
 
         db.Todos.Remove(todo);
         await db.SaveChangesAsync();
-        return true;
+        return todo;
     }
 }

@@ -9,14 +9,20 @@ namespace todo_api.Services
     {
 
         /// <summary>
-        /// Get alls todos based on filter params
+        /// Get all todos using pagination, filtering, and sorting.
         /// </summary>
-        /// <param name="page">Page number</param>
-        /// <param name="pageSize">Page size</param>
-        /// <param name="status">Status of todo</param>
-        /// <param name="sort">Sort order of todo</param>
-        /// <returns></returns>
-        Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status, TodoSortFilter sort);
+        /// <param name="page">1-based page number</param>
+        /// <param name="pageSize">Number of items per page</param>
+        /// <param name="status">
+        /// Status filter; use <see cref="TodoStatusFilter.All"/> to include all todos.
+        /// </param>
+        /// <param name="sort">Sort order for the result set</param>
+        /// <returns>A paged result of todos</returns>
+        Task<PagedResult<Todo>> GetAllAsync(
+            int page,
+            int pageSize,
+            TodoStatusFilter status,
+            TodoSortFilter sort);
 
         /// <summary>
         /// Get a single todo by id.
@@ -29,7 +35,7 @@ namespace todo_api.Services
         /// Create a new todo.
         /// </summary>
         /// <param name="request">Todo creation request</param>
-        /// <returns>The created Todo</returns>
+        /// <returns>Created Todo</returns>
         Task<Todo> CreateAsync(CreateTodoRequest request);
 
         /// <summary>
@@ -37,14 +43,14 @@ namespace todo_api.Services
         /// </summary>
         /// <param name="id">Id of the todo to update</param>
         /// <param name="request">Update request</param>
-        /// <returns>The updated todo if updated, null if not found</returns>
+        /// <returns>Updated todo if updated, null if not found</returns>
         Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request);
 
         /// <summary>
         /// Delete a todo by id.
         /// </summary>
         /// <param name="id">Id of the todo to delete</param>
-        /// <returns>True if deleted, false if not found</returns>
-        Task<bool> DeleteAsync(int id);
+        /// <returns>Deleted todo if deleted, null if not found</returns>
+        Task<Todo?> DeleteAsync(int id);
     }
 }
