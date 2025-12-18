@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using todo_api.Data;
 
-namespace todo_api.IntegrationTests;
+namespace todo_api.Tests.Integration;
 
 public class CustomWebApplicationFactory
     : WebApplicationFactory<Program>

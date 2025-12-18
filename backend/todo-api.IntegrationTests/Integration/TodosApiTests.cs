@@ -4,17 +4,12 @@ using FluentAssertions;
 using todo_api.Dtos;
 using Xunit;
 
-namespace todo_api.IntegrationTests;
+namespace todo_api.Tests.Integration;
 
-public class TodosApiTests
-    : IClassFixture<CustomWebApplicationFactory>
+public class TodosApiTests(CustomWebApplicationFactory factory)
+        : IClassFixture<CustomWebApplicationFactory>
 {
-    private readonly HttpClient _client;
-
-    public TodosApiTests(CustomWebApplicationFactory factory)
-    {
-        _client = factory.CreateClient();
-    }
+    private readonly HttpClient _client = factory.CreateClient();
 
     [Fact]
     public async Task Create_and_get_todo_returns_expected_result()

@@ -5,7 +5,7 @@
 		<IsPackable>false</IsPackable>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>todo_api.IntegrationTests</RootNamespace>
+		<RootNamespace>todo_api.Tests</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
