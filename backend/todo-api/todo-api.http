@@ -1,7 +1,25 @@
 @todo_api_HostAddress = http://localhost:5280
 
-### Get all todos
-GET {{todo_api_HostAddress}}/api/todos
+### Get all todos (default)
+GET {{todo_api_HostAddress}}/api/todos?page=1&pageSize=20&status=All&sort=CreatedDesc
+Accept: application/json
+
+###
+
+### Get active todos (newest first)
+GET {{todo_api_HostAddress}}/api/todos?page=1&pageSize=20&status=Active&sort=CreatedDesc
+Accept: application/json
+
+###
+
+### Get completed todos (oldest first)
+GET {{todo_api_HostAddress}}/api/todos?page=1&pageSize=20&status=Completed&sort=CreatedAsc
+Accept: application/json
+
+###
+
+### Get todos sorted by title (A–Z)
+GET {{todo_api_HostAddress}}/api/todos?page=1&pageSize=20&status=All&sort=TitleAsc
 Accept: application/json
 
 ###

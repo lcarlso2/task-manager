@@ -9,7 +9,7 @@ namespace todo_api.Services;
 
 public class TodoService(AppDbContext db) : ITodoService
 {
-    public async Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status)
+    public async Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status, TodoSortFilter sort)
     {
         var query = db.Todos.AsNoTracking();
 
@@ -20,7 +20,12 @@ public class TodoService(AppDbContext db) : ITodoService
             _ => query
         };
 
-        query = query.OrderByDescending(t => t.CreatedAt);
+        query = sort switch
+        {
+            TodoSortFilter.CreatedAsc => query.OrderBy(t => t.CreatedAt),
+            TodoSortFilter.TitleAsc => query.OrderBy(t => t.Title),
+            _ => query.OrderByDescending(t => t.CreatedAt)
+        };
 
         var totalCount = await query.CountAsync();
 

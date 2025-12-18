@@ -1,7 +1,16 @@
 export const FILTERS = {
-  ALL: "All",
-  ACTIVE: "Active",
-  COMPLETED: "Completed",
+  ALL: {
+    value: "all",
+    label: "All",
+  },
+  ACTIVE: {
+    value: "active",
+    label: "Active",
+  },
+  COMPLETED: {
+    value: "completed",
+    label: "Completed",
+  },
 } as const;
 
-export type Filter = (typeof FILTERS)[keyof typeof FILTERS];
+export type Filter = (typeof FILTERS)[keyof typeof FILTERS]["value"];

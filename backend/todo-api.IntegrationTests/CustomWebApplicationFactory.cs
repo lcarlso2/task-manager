@@ -32,5 +32,4 @@ public class CustomWebApplicationFactory
             db.Database.Migrate();
         });
     }
-
 }

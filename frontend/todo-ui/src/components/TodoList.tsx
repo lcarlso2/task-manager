@@ -6,19 +6,24 @@ import {
   FilterBar,
 } from "../components";
 import { FILTERS, type Filter } from "../types/filter";
+import { type Sort } from "../types/sort";
 import { useTodos } from "../hooks";
+import { SortControl } from "./SortControl";
 
 type TodoListProps = {
   filter: Filter;
-  onFilterChange: (filter: Filter) => void;
+  sort: Sort;
   page: number;
+  onFilterChange: (filter: Filter) => void;
+  onSortChange: (sort: Sort) => void;
   onPageChange: (page: number) => void;
 };
-
 export function TodoList({
   filter,
-  onFilterChange,
+  sort,
   page,
+  onFilterChange,
+  onSortChange,
   onPageChange,
 }: TodoListProps) {
   const [pageSize, setPageSize] = useState(20);
@@ -28,7 +33,7 @@ export function TodoList({
     isLoading,
     isError,
     error,
-  } = useTodos(page, pageSize, filter);
+  } = useTodos(page, pageSize, filter, sort);
 
   const handleFilterChange = (newFilter: Filter) => {
     onFilterChange(newFilter);
@@ -68,12 +73,14 @@ export function TodoList({
 
       <div className="todo-panel">
         <div className="todo-panel-header">
-          {todos && (
+          {todos && (<>
             <div className="todo-meta">
               {todos.totalCount}{" "}
-              {filter === FILTERS.ALL ? "Todo" : `${filter} Todo`}
+              {filter === FILTERS.ALL.value ? "Todo" : `${filter} Todo`}
               {todos.totalCount === 1 ? "" : "s"}
             </div>
+            <SortControl value={sort} onChange={onSortChange} />
+            </>
           )}
         </div>
 

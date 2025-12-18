@@ -18,14 +18,15 @@ public class TodosController(ITodoService todoService) : ControllerBase
     public async Task<ActionResult<PagedResult<TodoResponse>>> GetAll(
       [FromQuery] int page = 1,
       [FromQuery] int pageSize = 20,
-      [FromQuery] TodoStatusFilter status = TodoStatusFilter.All)
+      [FromQuery] TodoStatusFilter status = TodoStatusFilter.All,
+      [FromQuery] TodoSortFilter sort = TodoSortFilter.CreatedAsc)
     {
         if (page < 1 || pageSize < 1 || pageSize > 100)
         {
             return BadRequest("Invalid pagination parameters");
         }
 
-        var result = await todoService.GetAllAsync(page, pageSize, status);
+        var result = await todoService.GetAllAsync(page, pageSize, status, sort);
 
         return Ok(new PagedResult<TodoResponse>
         {

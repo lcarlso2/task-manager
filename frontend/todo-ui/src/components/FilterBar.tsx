@@ -8,21 +8,14 @@ type FilterBarProps = {
 export function FilterBar({ filter, onChange }: FilterBarProps) {
   return (
     <div className="filters">
-      <FilterButton
-        label="All"
-        active={filter === FILTERS.ALL}
-        onClick={() => onChange(FILTERS.ALL)}
-      />
-      <FilterButton
-        label="Active"
-        active={filter === FILTERS.ACTIVE}
-        onClick={() => onChange(FILTERS.ACTIVE)}
-      />
-      <FilterButton
-        label="Completed"
-        active={filter === FILTERS.COMPLETED}
-        onClick={() => onChange(FILTERS.COMPLETED)}
-      />
+      {Object.values(FILTERS).map(({ value, label }) => (
+        <FilterButton
+          key={value}
+          label={label}
+          active={filter === value}
+          onClick={() => onChange(value)}
+        />
+      ))}
     </div>
   );
 }

@@ -2,16 +2,18 @@ import type { Todo } from "../types/todo";
 import type { PagedResult } from "../types/pagedResult";
 import type { Filter } from "../types/filter";
 import { handleApiResponse } from "./handleApiResponse";
+import type { Sort } from "../types/sort";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function fetchTodos(
   page: number,
   pageSize: number,
-  filter: Filter
+  filter: Filter,
+  sort: Sort
 ): Promise<PagedResult<Todo>> {
   const response = await fetch(
-    `${API_BASE_URL}/todos?page=${page}&pageSize=${pageSize}&status=${filter}`
+    `${API_BASE_URL}/todos?page=${page}&pageSize=${pageSize}&status=${filter}&sort=${sort}`
   );
 
   return handleApiResponse(response);

@@ -1,11 +1,19 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using todo_api.Data;
 using todo_api.Middleware;
 using todo_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter()
+    );
+}); ;
 
 builder.Services.AddCors(options =>
 {

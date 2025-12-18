@@ -7,15 +7,16 @@ namespace todo_api.Services
 {
     public interface ITodoService
     {
-     
+
         /// <summary>
         /// Get alls todos based on filter params
         /// </summary>
         /// <param name="page">Page number</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="status">Status of todo</param>
+        /// <param name="sort">Sort order of todo</param>
         /// <returns></returns>
-        Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status);
+        Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status, TodoSortFilter sort);
 
         /// <summary>
         /// Get a single todo by id.
