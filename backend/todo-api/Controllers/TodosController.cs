@@ -63,13 +63,13 @@ public class TodosController(ITodoService todoService) : ControllerBase
 
     // PUT /api/todos/{id}
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, UpdateTodoRequest request)
+    public async Task<ActionResult<TodoResponse>> Update(int id, UpdateTodoRequest request)
     {
         var updated = await todoService.UpdateAsync(id, request);
-        if (!updated)
+        if (updated == null)
             return NotFound();
 
-        return Ok(updated);
+        return Ok(updated.ToResponse());
     }
 
     // DELETE /api/todos/{id}

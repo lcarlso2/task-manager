@@ -64,17 +64,17 @@ public class TodoService(AppDbContext db) : ITodoService
         return todo;
     }
 
-    public async Task<bool> UpdateAsync(int id, UpdateTodoRequest request)
+    public async Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request)
     {
         var todo = await db.Todos.FindAsync(id);
         if (todo is null)
-            return false;
+            return null;
 
         todo.Title = request.Title;
         todo.IsCompleted = request.IsCompleted;
 
         await db.SaveChangesAsync();
-        return true;
+        return todo;
     }
 
     public async Task<bool> DeleteAsync(int id)

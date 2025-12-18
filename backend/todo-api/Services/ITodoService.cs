@@ -37,8 +37,8 @@ namespace todo_api.Services
         /// </summary>
         /// <param name="id">Id of the todo to update</param>
         /// <param name="request">Update request</param>
-        /// <returns>True if updated, false if not found</returns>
-        Task<bool> UpdateAsync(int id, UpdateTodoRequest request);
+        /// <returns>The updated todo if updated, null if not found</returns>
+        Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request);
 
         /// <summary>
         /// Delete a todo by id.
