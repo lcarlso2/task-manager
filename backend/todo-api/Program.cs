@@ -13,7 +13,7 @@ builder.Services
     options.JsonSerializerOptions.Converters.Add(
         new JsonStringEnumConverter()
     );
-}); ;
+});
 
 builder.Services.AddCors(options =>
 {

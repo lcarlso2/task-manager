@@ -51,7 +51,12 @@ public class TodosController(ITodoService todoService) : ControllerBase
         });
     }
 
-    // GET /api/todos/{id}
+    /// <summary>
+    /// Returns a single todo by id.
+    /// </summary>
+    /// <param name="id">Todo identifier</param>
+    /// <response code="200">Todo found</response>
+    /// <response code="404">Todo not found</response>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(TodoResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -66,7 +71,12 @@ public class TodosController(ITodoService todoService) : ControllerBase
         return Ok(todo.ToResponse());
     }
 
-    // POST /api/todos
+    /// <summary>
+    /// Creates a new todo.
+    /// </summary>
+    /// <param name="request">Todo creation payload</param>
+    /// <response code="201">Todo created successfully</response>
+    /// <response code="400">Validation failed</response>
     [HttpPost]
     [ProducesResponseType(typeof(TodoResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -81,7 +91,14 @@ public class TodosController(ITodoService todoService) : ControllerBase
         );
     }
 
-    // PUT /api/todos/{id}
+    /// <summary>
+    /// Updates an existing todo.
+    /// </summary>
+    /// <param name="id">Todo identifier</param>
+    /// <param name="request">Updated todo values</param>
+    /// <response code="200">Todo updated successfully</response>
+    /// <response code="404">Todo not found</response>
+    /// <response code="400">Validation failed</response>
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(TodoResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -97,7 +114,12 @@ public class TodosController(ITodoService todoService) : ControllerBase
         return Ok(updated.ToResponse());
     }
 
-    // DELETE /api/todos/{id}
+    /// <summary>
+    /// Deletes a todo.
+    /// </summary>
+    /// <param name="id">Todo identifier</param>
+    /// <response code="204">Todo deleted successfully</response>
+    /// <response code="404">Todo not found</response>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
