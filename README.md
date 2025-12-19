@@ -34,9 +34,8 @@ A small, production-style full-stack Todo application built with a .NET 8 backen
 
 ## Backend Setup
 
-cd backend\todo-api
+cd backend/todo-api
 dotnet restore
-dotnet ef database update
 dotnet run --launch-profile https
 
 API runs at https://localhost:7206
@@ -46,12 +45,12 @@ Swagger UI available at https://localhost:7206/swagger
 
 ## Frontend Setup
 
-cd frontend\todo-ui
+cd frontend/todo-ui
 npm install
 npm run dev
 
 Create a .env file if needed:
-VITE_API_BASE_URL=https://localhost:7206
+VITE_API_BASE_URL=https://localhost:7206/api
 
 The frontend validates the API base URL at startup and will fail fast if it is missing or misconfigured.
 
@@ -91,10 +90,10 @@ Cached data is reused for immediate rendering to prevent UI flicker, while backg
 The API follows RESTful conventions and uses DTOs for all requests and responses. Validation occurs at the API boundary, and error responses are centralized and consistent.
 
 Endpoints:
-- GET /todos — supports pagination, filtering, and sorting
-- POST /todos
-- PUT /todos/{id}
-- DELETE /todos/{id}
+- GET /api/todos — supports pagination, filtering, and sorting
+- POST /api/todos
+- PUT /api/todos/{id}
+- DELETE /api/todos/{id}
 
 ---
 

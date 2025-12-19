@@ -24,9 +24,7 @@ export async function fetchTodos(
     sort,
   });
 
-  const response = await fetch(
-    `${API_BASE_URL}/todos?${params.toString()}`
-  );
+  const response = await fetch(`${API_BASE_URL}/todos?${params.toString()}`);
 
   return handleApiResponse(response);
 }
@@ -42,10 +40,15 @@ export async function createTodo(title: string): Promise<Todo> {
 }
 
 export async function updateTodo(todo: Todo): Promise<Todo> {
+  const payload = {
+    title: todo.title,
+    isCompleted: todo.isCompleted,
+  };
+
   const response = await fetch(`${API_BASE_URL}/todos/${todo.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(todo),
+    body: JSON.stringify(payload),
   });
 
   return handleApiResponse(response);

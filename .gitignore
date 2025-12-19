@@ -61,6 +61,5 @@ obj/
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
 *.csproj.user
