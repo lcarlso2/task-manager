@@ -41,6 +41,8 @@ dotnet run --launch-profile https
 API runs at https://localhost:7206
 Swagger UI available at https://localhost:7206/swagger
 
+On startup, the API automatically applies EF Core migrations to the SQLite database.
+
 ---
 
 ## Frontend Setup
