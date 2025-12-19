@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Net.Http.Json;
-using FluentAssertions;
 using todo_api.Dtos;
 using Xunit;
 
@@ -42,5 +44,22 @@ public class TodosApiTests(CustomWebApplicationFactory factory)
         fetchedTodo.Should().NotBeNull();
         fetchedTodo!.Id.Should().Be(createdTodo.Id);
         fetchedTodo.Title.Should().Be(createdTodo.Title);
+    }
+
+    [Fact]
+    public async Task Get_unknown_todo_returns_404_problem_details()
+    {
+        var unknownId = 999_999;
+
+        var response = await _client.GetAsync($"/api/todos/{unknownId}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var problem =
+            await response.Content.ReadFromJsonAsync<ProblemDetails>();
+
+        problem.Should().NotBeNull();
+        problem!.Status.Should().Be(StatusCodes.Status404NotFound);
+        problem.Title.Should().NotBeNullOrWhiteSpace();
     }
 }

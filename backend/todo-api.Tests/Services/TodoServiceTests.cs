@@ -30,7 +30,6 @@ namespace todo_api.Tests.Services
         [Fact]
         public async Task GetAllAsync_returns_correct_page_items_and_total_count()
         {
-            // Arrange
             using var context = CreateDbContext();
             var service = new TodoService(context);
 
@@ -43,7 +42,6 @@ namespace todo_api.Tests.Services
             context.Todos.AddRange(todos);
             await context.SaveChangesAsync();
 
-            // Act
             var result = await service.GetAllAsync(
                 page: 2,
                 pageSize: 10,
@@ -52,7 +50,6 @@ namespace todo_api.Tests.Services
                 token: CancellationToken.None
             );
 
-            // Assert
             result.Should().NotBeNull();
             result.Page.Should().Be(2);
             result.PageSize.Should().Be(10);
