@@ -1,0 +1,60 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # Backend (.NET) tests
+      # -------------------------
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore backend dependencies
+        working-directory: backend/todo-api
+        run: dotnet restore
+
+      - name: Run backend tests
+        working-directory: backend/todo-api
+        run: dotnet test --no-restore
+
+      # -------------------------
+      # Frontend (Node) tests
+      # -------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: frontend/todo-ui/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend/todo-ui
+        run: npm install
+
+      - name: Run frontend component tests
+        working-directory: frontend/todo-ui
+        run: npm run test
+
+      # -------------------------
+      # Playwright E2E tests
+      # -------------------------
+      - name: Install Playwright browsers
+        working-directory: frontend/todo-ui
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright e2e tests
+        working-directory: frontend/todo-ui
+        run: npm run test:e2e
