@@ -27,7 +27,7 @@ public class TodoService(AppDbContext db) : ITodoService
             _ => query.OrderByDescending(t => t.CreatedAt).ThenByDescending(t => t.Id)
         };
 
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync(token);
 
         var items = await query
             .Skip((page - 1) * pageSize)
