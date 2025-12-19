@@ -1,6 +1,6 @@
 # Todo App
 
-A small, production-style full-stack Todo application built with a .NET 8 backend and a React frontend. The focus is on clean architecture, predictable data flow, and realistic UX patterns rather than feature volume.
+A small, production-style full-stack Todo application built with a .NET 8 backend and a React frontend. The focus is on clean architecture, predictable data flow, realistic UX patterns, and explicit trade-offs rather than feature volume. This implementation prioritizes clarity, correctness, and realistic production patterns over feature breadth. Some decisions, such as layered testing and explicitly documented trade-offs, are included to demonstrate approach rather than scale.
 
 ---
 
@@ -19,6 +19,8 @@ A small, production-style full-stack Todo application built with a .NET 8 backen
 - TypeScript
 - @tanstack/react-query for server state management
 - Minimal, component-driven UI
+- Vitest + React Testing Library for component tests
+- Playwright for end-to-end testing
 
 ---
 
@@ -38,13 +40,14 @@ dotnet ef database update
 dotnet run --launch-profile https  
 
 API runs at https://localhost:7206  
+
 Swagger UI available at https://localhost:7206/swagger  
 
 ---
 
 ## Frontend Setup
 
-cd frontend  
+cd frontend\todo-ui  
 npm install  
 npm run dev  
 
@@ -60,6 +63,7 @@ Frontend runs at http://localhost:5173
 
 - Create, read, update, and delete todos
 - Inline editing of todo titles
+- Immediate UI feedback when toggling completion while background refetch occurs
 - Clear loading, error, and empty states
 - Server-side pagination, filtering, and sorting for scalability
 - Completed todos are read-only in the UI to prevent accidental changes
@@ -72,11 +76,13 @@ Frontend runs at http://localhost:5173
 
 Server state on the frontend is managed using TanStack Query (React Query).
 
-The todo list uses a short cache lifetime to favor correctness and predictable behavior over aggressive caching. Because todos change frequently and support pagination, filtering, and sorting, list data is refetched on navigation and after mutations rather than relying on optimistic list updates.
+The todo list favors correctness and predictable behavior over aggressive caching. Because todos change frequently and support pagination, filtering, and sorting, list data is refetched on navigation and after mutations rather than relying on optimistic list updates.
 
 Optimistic updates were intentionally avoided for paginated and filtered lists. While optimistic updates work well for single-entity mutations, applying them to multi-dimensional lists introduces ambiguity around ordering, pagination boundaries, and filter membership. Instead, the backend remains the source of truth, and the UI relies on controlled refetching to stay consistent.
 
-Cached data is still reused for immediate rendering to prevent UI flicker, while background refetches ensure up-to-date views. This approach prioritizes clarity, correctness, and maintainability, and reflects how similar CRUD lists are commonly handled in production applications.
+One intentional exception is the todo completion checkbox. Toggling completion applies a local UI override immediately to improve perceived responsiveness, while the mutation and subsequent refetch occur in the background. This improves UX without mutating cached server data or assuming mutation success. Because the override is scoped to a single entity and reconciled on refetch, it avoids the consistency issues optimistic updates introduce for paginated or filtered lists.
+
+Cached data is still reused for immediate rendering to prevent UI flicker, while background refetches ensure up-to-date views.
 
 ---
 
@@ -94,9 +100,47 @@ Endpoints:
 
 ## Testing
 
-The project includes an integration test validating core API behavior through end-to-end request handling, persistence, and core response contracts.
+The project includes multiple layers of testing, each targeting a different concern.
 
-Tests run against SQLite using a real relational provider and applied EF Core migrations, rather than EF Core’s in-memory database. An in-memory SQLite connection is used to keep tests fast while still exercising real SQL generation, schema constraints, and execution paths that more closely match production behavior.
+### Backend Service Tests
+
+Service tests validate core business logic in isolation from HTTP and controller concerns. These tests exercise the TodoService directly using an in-memory SQLite database to ensure real relational behavior for pagination, sorting, and filtering logic, including correct Skip and Take semantics.
+
+This layer provides fast feedback for business rules while still using a real database provider, avoiding the pitfalls of EF Core’s in-memory database.
+
+### Backend Integration Tests
+
+Integration tests validate API behavior end-to-end, including request handling, persistence, and response contracts. Tests run against SQLite using a real relational provider and applied EF Core migrations rather than EF Core’s in-memory database. An in-memory SQLite connection is used to keep tests fast while still exercising real SQL generation and schema constraints.
+
+Run backend tests:
+
+cd backend\todo-api  
+dotnet test  
+
+### Frontend Component Tests
+
+Component tests use Vitest and React Testing Library to validate isolated UI behavior and client-side validation logic without involving the backend. Data hooks are mocked to ensure tests remain focused and deterministic.
+
+Run component tests:
+
+cd frontend\todo-ui  
+npm run test  
+
+### End-to-End Tests
+
+End-to-end tests use Playwright to validate full user flows across the frontend and backend. Tests start the frontend and backend, create todos through the UI, and verify persistence via the API. Unique test data is used to keep tests idempotent when running against a static database.
+
+Before running e2e tests, ensure no conflicting frontend or backend servers are running.
+
+Run e2e tests:
+
+cd frontend\todo-ui  
+npx playwright install  
+npm run test:e2e  
+
+To run Playwright in headed mode for debugging:
+
+npm run test:e2e -- --headed  
 
 ---
 
@@ -104,20 +148,20 @@ Tests run against SQLite using a real relational provider and applied EF Core mi
 
 Authentication and authorization are out of scope to keep the focus on API design, validation, and frontend/backend interaction. Styling is intentionally minimal to emphasize behavior and architecture.
 
-PUT is used for updates instead of PATCH for simplicity and clarity. The todo update surface is small and stable (primarily title and completion state), and PUT allows the client to send a complete, explicit representation of a todo without introducing partial-update semantics or merge ambiguity. For larger or more frequently changing resources, PATCH would be more appropriate.
+PUT is used for updates instead of PATCH for simplicity and clarity. The todo update surface is small and stable, and PUT allows the client to send a complete representation without introducing partial-update semantics. For larger or more dynamic resources, PATCH would be more appropriate.
 
-Completed todos are treated as immutable only at the UI level. The API does not currently block updates or deletes for completed todos. This is a deliberate trade-off to keep backend rules simple while still demonstrating UX-level safeguards. In a production system, this rule would likely be enforced at the API level or replaced with an archival workflow and explicit state transitions.
+Completed todos are treated as immutable only at the UI level. The API does not currently block updates or deletes for completed todos. This is a deliberate trade-off to keep backend rules simple while still demonstrating UX-level safeguards. In a production system, this rule would likely be enforced at the API level or replaced with an archival workflow.
 
-For simplicity, sorting is modeled as a single enum representing supported user-facing sort options. If additional sort combinations were needed, this could evolve into separate SortField and SortDirection parameters.
+Sorting is modeled as a single enum representing supported user-facing sort options. If additional sort combinations were needed, this could evolve into separate sort field and direction parameters.
 
 ---
 
 ## What I’d Do Next
 
-Improve accessibility and keyboard navigation by adding ARIA attributes for all inputs, focus management, and keyboard shortcuts for editing and saving todos. Add frontend tests for critical user flows such as creating, editing, completing/uncompleting, deleting, and paginating todos, with particular focus on validating cache behavior and error recovery. Replace browser confirm dialogs with inline confirmations or toasts to improve perceived polish and avoid blocking UI flows. Sync pagination, filter, and sort state to the URL to enable refresh-safe navigation, deep linking, and shareable views as the app scales. Introduce authentication and per-user todo ownership to add realistic data boundaries, enable meaningful authorization rules, and support API-level enforcement of ownership and immutability. Finally, harden API invariants by moving certain UX rules (such as completed todo immutability) into the API once business rules become non-negotiable, ensuring consistency across clients and preventing rule bypassing.
+Improve accessibility and keyboard navigation by adding ARIA attributes, focus management, and keyboard shortcuts. Expand frontend test coverage for pagination, filtering, and error recovery flows. Replace browser confirm dialogs with inline confirmations or toasts. Sync pagination, filter, and sort state to the URL to support deep linking and refresh-safe navigation. Introduce authentication and per-user todo ownership to enforce realistic data boundaries. Finally, move certain UX rules, such as completed todo immutability, into the API once business constraints become non-negotiable.
 
 ---
 
 ## Summary
 
-This project is intentionally small but structured like a production MVP, with clean backend boundaries, predictable frontend data flow, clear UX states, and explicit, documented trade-offs. The goal was to build something maintainable and easy to extend, not to maximize feature count.
+This project is intentionally small but structured like a production MVP, with clean backend boundaries, predictable frontend data flow, layered testing at the service, integration, component, and end-to-end levels, and explicit trade-offs. The goal was to build something maintainable and easy to extend rather than to maximize feature count.
