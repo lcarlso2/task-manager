@@ -27,7 +27,7 @@ A small, production-style full-stack Todo application built with a .NET 8 backen
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 20+
 - .NET SDK 8+
 
 ---
