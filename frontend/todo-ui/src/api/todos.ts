@@ -11,15 +11,21 @@ if (!API_BASE_URL) {
   throw new Error("VITE_API_BASE_URL is not defined");
 }
 
-
 export async function fetchTodos(
   page: number,
   pageSize: PageSize,
   filter: Filter,
   sort: Sort
 ): Promise<PagedResult<Todo>> {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    pageSize: pageSize.toString(),
+    status: filter,
+    sort,
+  });
+
   const response = await fetch(
-    `${API_BASE_URL}/todos?page=${page}&pageSize=${pageSize}&status=${filter}&sort=${sort}`
+    `${API_BASE_URL}/todos?${params.toString()}`
   );
 
   return handleApiResponse(response);
