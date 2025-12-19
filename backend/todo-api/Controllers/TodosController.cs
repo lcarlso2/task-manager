@@ -33,14 +33,15 @@ public class TodosController(ITodoService todoService) : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
         [FromQuery] TodoStatusFilter status = TodoStatusFilter.All,
-        [FromQuery] TodoSortFilter sort = TodoSortFilter.CreatedDesc)
+        [FromQuery] TodoSortFilter sort = TodoSortFilter.CreatedDesc,
+        CancellationToken token = default)
     {
         if (!PaginationRules.IsValid(page, pageSize))
         {
             return this.InvalidPagination(page, pageSize);
         }
 
-        var result = await todoService.GetAllAsync(page, pageSize, status, sort);
+        var result = await todoService.GetAllAsync(page, pageSize, status, sort, token);
 
         return Ok(new PagedResult<TodoResponse>
         {
@@ -60,9 +61,9 @@ public class TodosController(ITodoService todoService) : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(TodoResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TodoResponse>> GetById(int id)
+    public async Task<ActionResult<TodoResponse>> GetById(int id, CancellationToken token = default)
     {
-        var todo = await todoService.GetByIdAsync(id);
+        var todo = await todoService.GetByIdAsync(id, token);
         if (todo is null)
         {
             return this.TodoNotFound(id);
@@ -80,9 +81,9 @@ public class TodosController(ITodoService todoService) : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(TodoResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<TodoResponse>> Create(CreateTodoRequest request)
+    public async Task<ActionResult<TodoResponse>> Create(CreateTodoRequest request, CancellationToken token = default)
     {
-        var todo = await todoService.CreateAsync(request);
+        var todo = await todoService.CreateAsync(request, token);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -103,9 +104,9 @@ public class TodosController(ITodoService todoService) : ControllerBase
     [ProducesResponseType(typeof(TodoResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<TodoResponse>> Update(int id, UpdateTodoRequest request)
+    public async Task<ActionResult<TodoResponse>> Update(int id, UpdateTodoRequest request, CancellationToken token = default)
     {
-        var updated = await todoService.UpdateAsync(id, request);
+        var updated = await todoService.UpdateAsync(id, request, token);
         if (updated is null)
         {
             return this.TodoNotFound(id);
@@ -123,9 +124,9 @@ public class TodosController(ITodoService todoService) : ControllerBase
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken token = default)
     {
-        var todo = await todoService.DeleteAsync(id);
+        var todo = await todoService.DeleteAsync(id, token);
         if (todo is null)
         {
             return this.TodoNotFound(id);

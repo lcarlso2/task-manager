@@ -22,21 +22,22 @@ namespace todo_api.Services
             int page,
             int pageSize,
             TodoStatusFilter status,
-            TodoSortFilter sort);
+            TodoSortFilter sort,
+            CancellationToken token);
 
         /// <summary>
         /// Get a single todo by id.
         /// </summary>
         /// <param name="id">Todo id</param>
         /// <returns>Todo if found, otherwise null</returns>
-        Task<Todo?> GetByIdAsync(int id);
+        Task<Todo?> GetByIdAsync(int id, CancellationToken token);
 
         /// <summary>
         /// Create a new todo.
         /// </summary>
         /// <param name="request">Todo creation request</param>
         /// <returns>Created Todo</returns>
-        Task<Todo> CreateAsync(CreateTodoRequest request);
+        Task<Todo> CreateAsync(CreateTodoRequest request, CancellationToken token);
 
         /// <summary>
         /// Update an existing todo.
@@ -44,13 +45,13 @@ namespace todo_api.Services
         /// <param name="id">Id of the todo to update</param>
         /// <param name="request">Update request</param>
         /// <returns>Updated todo if updated, null if not found</returns>
-        Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request);
+        Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request, CancellationToken token);
 
         /// <summary>
         /// Delete a todo by id.
         /// </summary>
         /// <param name="id">Id of the todo to delete</param>
         /// <returns>Deleted todo if deleted, null if not found</returns>
-        Task<Todo?> DeleteAsync(int id);
+        Task<Todo?> DeleteAsync(int id, CancellationToken token);
     }
 }

@@ -48,7 +48,8 @@ namespace todo_api.Tests.Services
                 page: 2,
                 pageSize: 10,
                 status: TodoStatusFilter.All,
-                sort: TodoSortFilter.TitleAsc
+                sort: TodoSortFilter.TitleAsc,
+                token: CancellationToken.None
             );
 
             // Assert

@@ -9,7 +9,7 @@ namespace todo_api.Services;
 
 public class TodoService(AppDbContext db) : ITodoService
 {
-    public async Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status, TodoSortFilter sort)
+    public async Task<PagedResult<Todo>> GetAllAsync(int page, int pageSize, TodoStatusFilter status, TodoSortFilter sort, CancellationToken token)
     {
         var query = db.Todos.AsNoTracking();
 
@@ -32,7 +32,7 @@ public class TodoService(AppDbContext db) : ITodoService
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync();
+            .ToListAsync(token);
 
         return new PagedResult<Todo>
         {
@@ -43,14 +43,14 @@ public class TodoService(AppDbContext db) : ITodoService
         };
     }
 
-    public async Task<Todo?> GetByIdAsync(int id)
+    public async Task<Todo?> GetByIdAsync(int id, CancellationToken token)
     {
         return await db.Todos
             .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.Id == id);
+            .FirstOrDefaultAsync(t => t.Id == id, token);
     }
 
-    public async Task<Todo> CreateAsync(CreateTodoRequest request)
+    public async Task<Todo> CreateAsync(CreateTodoRequest request, CancellationToken token)
     {
         var todo = new Todo
         {
@@ -59,32 +59,40 @@ public class TodoService(AppDbContext db) : ITodoService
         };
 
         db.Todos.Add(todo);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(token);
 
         return todo;
     }
 
-    public async Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request)
+    public async Task<Todo?> UpdateAsync(int id, UpdateTodoRequest request, CancellationToken token)
     {
-        var todo = await db.Todos.FindAsync(id);
+        var todo = await db.Todos.FindAsync(
+            [id],
+            cancellationToken: token
+        );
+
         if (todo is null)
             return null;
 
         todo.Title = request.Title;
         todo.IsCompleted = request.IsCompleted;
 
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(token);
         return todo;
     }
 
-    public async Task<Todo?> DeleteAsync(int id)
+    public async Task<Todo?> DeleteAsync(int id, CancellationToken token)
     {
-        var todo = await db.Todos.FindAsync(id);
+        var todo = await db.Todos.FindAsync(
+            [id],
+            cancellationToken: token
+        );
+
         if (todo is null)
             return null;
 
         db.Todos.Remove(todo);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(token);
         return todo;
     }
 }
