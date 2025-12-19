@@ -5,9 +5,7 @@ import { FILTERS, type Filter } from "./types/filter";
 import { SORTS, type Sort } from "./types/sort";
 import "./App.css";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "./config/pagination";
-if (import.meta.env.DEV) {
-  (window as any).__API_BASE__ = import.meta.env.VITE_API_BASE_URL;
-}
+
 export default function App() {
   const [filter, setFilter] = useState<Filter>(FILTERS.ALL.value);
   const [sort, setSort] = useState<Sort>(SORTS.CREATED_DESC.value);
