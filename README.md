@@ -142,6 +142,8 @@ To run Playwright in headed mode for debugging:
 
 npm run test:e2e -- --headed  
 
+Tests can also be run via GitHub Actions using the “Run Tests” workflow in the repository’s Actions tab.
+
 ---
 
 ## Assumptions & Trade-offs
