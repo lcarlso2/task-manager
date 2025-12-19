@@ -23,11 +23,11 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore backend dependencies
-        working-directory: backend/todo-api
+        working-directory: backend/todo-api.Tests
         run: dotnet restore
 
       - name: Run backend tests
-        working-directory: backend/todo-api
+        working-directory: backend/todo-api.Tests
         run: dotnet test --no-restore
 
       # -------------------------

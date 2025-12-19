@@ -114,8 +114,8 @@ Integration tests validate API behavior end-to-end, including request handling, 
 
 Run backend tests:
 
-cd backend\todo-api  
-dotnet test  
+cd backend\todo-api.Tests
+dotnet test
 
 ### Frontend Component Tests
 
