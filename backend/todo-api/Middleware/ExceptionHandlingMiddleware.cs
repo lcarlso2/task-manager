@@ -1,11 +1,12 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
 
 namespace todo_api.Middleware;
 
 /// <summary>
 /// Middleware that catches unhandled exceptions and returns a consistent
-/// JSON error response instead of allowing the request to crash.
+/// ProblemDetails error response instead of allowing the request to crash.
 /// </summary>
 /// <remarks>
 /// This acts as a final safety net for unexpected failures. Known errors
@@ -13,7 +14,8 @@ namespace todo_api.Middleware;
 /// </remarks>
 public class ExceptionHandlingMiddleware(
     RequestDelegate next,
-    ILogger<ExceptionHandlingMiddleware> logger)
+    ILogger<ExceptionHandlingMiddleware> logger,
+    IWebHostEnvironment env)
 {
     /// <summary>
     /// Invokes the next middleware and handles any unhandled exceptions.
@@ -29,18 +31,28 @@ public class ExceptionHandlingMiddleware(
             // Log full exception details for diagnostics
             logger.LogError(ex, "Unhandled exception");
 
-            // Return a generic 500 response to avoid leaking internal details
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            context.Response.ContentType = "application/json";
+            var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
 
-            var response = new
+            var problem = new ProblemDetails
             {
-                error = "An unexpected error occurred.",
-                traceId = context.TraceIdentifier
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occurred",
+                Type = "https://httpstatuses.com/500",
+                Instance = context.Request.Path
             };
 
-            await context.Response.WriteAsync(
-                JsonSerializer.Serialize(response));
+            // Only include exception details in Development
+            if (env.IsDevelopment())
+            {
+                problem.Detail = ex.Message;
+            }
+
+            problem.Extensions["traceId"] = traceId;
+
+            context.Response.StatusCode = problem.Status.Value;
+            context.Response.ContentType = "application/problem+json";
+
+            await context.Response.WriteAsJsonAsync(problem);
         }
     }
 }
