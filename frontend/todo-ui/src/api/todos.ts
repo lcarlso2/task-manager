@@ -3,12 +3,13 @@ import type { PagedResult } from "../types/pagedResult";
 import type { Filter } from "../types/filter";
 import { handleApiResponse } from "./handleApiResponse";
 import type { Sort } from "../types/sort";
+import type { PageSize } from "../config/pagination";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function fetchTodos(
   page: number,
-  pageSize: number,
+  pageSize: PageSize,
   filter: Filter,
   sort: Sort
 ): Promise<PagedResult<Todo>> {

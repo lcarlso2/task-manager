@@ -28,7 +28,8 @@
 .todo-panel {
   display: flex;
   flex-direction: column;
-  height: 40vh;
+  height: 55vh;
+  width: 50vh;
   background-color: #1f2937;
   border: 1px solid #374151;
   border-radius: 8px;
@@ -146,8 +147,13 @@
 
 .create-todo {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+}
+
+.create-todo-inputs {
+  display: flex;
+  gap: 0.5rem;
 }
 
 /* ---------- Pagination ---------- */

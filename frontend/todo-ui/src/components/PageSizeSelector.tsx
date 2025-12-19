@@ -1,6 +1,8 @@
+import { PAGE_SIZE_OPTIONS, type PageSize } from "../config/pagination";
+
 type PageSizeSelectorProps = {
-  value: number;
-  onChange: (size: number) => void;
+  value: PageSize;
+  onChange: (size: PageSize) => void;
 };
 
 export function PageSizeSelector({ value, onChange }: PageSizeSelectorProps) {
@@ -9,11 +11,13 @@ export function PageSizeSelector({ value, onChange }: PageSizeSelectorProps) {
       <span>Items per page:</span>
       <select
         value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => onChange(Number(e.target.value) as PageSize)}
       >
-        <option value={10}>10</option>
-        <option value={20}>20</option>
-        <option value={50}>50</option>
+        {PAGE_SIZE_OPTIONS.map((size) => (
+          <option key={size} value={size}>
+            {size}
+          </option>
+        ))}
       </select>
     </label>
   );

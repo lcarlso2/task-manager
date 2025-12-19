@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   TodoItem,
   PaginationControls,
@@ -9,25 +8,28 @@ import { FILTERS, type Filter } from "../types/filter";
 import { type Sort } from "../types/sort";
 import { useTodos } from "../hooks";
 import { SortControl } from "./SortControl";
+import type { PageSize } from "../config/pagination";
 
 type TodoListProps = {
   filter: Filter;
   sort: Sort;
   page: number;
+  pageSize: PageSize;
   onFilterChange: (filter: Filter) => void;
   onSortChange: (sort: Sort) => void;
   onPageChange: (page: number) => void;
+  onPageSizeChange: (size: PageSize) => void;
 };
 export function TodoList({
   filter,
   sort,
   page,
+  pageSize,
   onFilterChange,
   onSortChange,
   onPageChange,
+  onPageSizeChange,
 }: TodoListProps) {
-  const [pageSize, setPageSize] = useState(20);
-
   const {
     data: todos,
     isLoading,
@@ -40,6 +42,7 @@ export function TodoList({
   };
 
   const isInitialLoad = isLoading && !todos;
+  const listContextKey = `${filter}:${sort}:${page}:${pageSize}`;
   let panelBody: React.ReactNode;
 
   if (isInitialLoad) {
@@ -59,7 +62,7 @@ export function TodoList({
     panelBody = (
       <ul className="todo-list">
         {todos.items.map((todo) => (
-          <TodoItem key={todo.id} todo={todo} />
+          <TodoItem key={`${listContextKey}:${todo.id}`} todo={todo} />
         ))}
       </ul>
     );
@@ -73,13 +76,14 @@ export function TodoList({
 
       <div className="todo-panel">
         <div className="todo-panel-header">
-          {todos && (<>
-            <div className="todo-meta">
-              {todos.totalCount}{" "}
-              {filter === FILTERS.ALL.value ? "Todo" : `${filter} Todo`}
-              {todos.totalCount === 1 ? "" : "s"}
-            </div>
-            <SortControl value={sort} onChange={onSortChange} />
+          {todos && (
+            <>
+              <div className="todo-meta">
+                {todos.totalCount}{" "}
+                {filter === FILTERS.ALL.value ? "Todo" : `${filter} Todo`}
+                {todos.totalCount === 1 ? "" : "s"}
+              </div>
+              <SortControl value={sort} onChange={onSortChange} />
             </>
           )}
         </div>
@@ -95,13 +99,7 @@ export function TodoList({
                 onPageChange={onPageChange}
               />
 
-              <PageSizeSelector
-                value={pageSize}
-                onChange={(size) => {
-                  setPageSize(size);
-                  onPageChange(1);
-                }}
-              />
+              <PageSizeSelector value={todos.pageSize} onChange={onPageSizeChange} />
             </div>
           </div>
         )}

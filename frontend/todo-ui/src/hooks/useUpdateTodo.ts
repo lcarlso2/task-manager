@@ -9,7 +9,8 @@ export function useUpdateTodo() {
     mutationFn: updateTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: todoKeys.lists(),
+        queryKey: todoKeys.all,
+        refetchType: "active",
       });
     },
   });

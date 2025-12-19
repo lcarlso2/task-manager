@@ -11,6 +11,9 @@ export function TodoItem({ todo }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
   const [error, setError] = useState<string | null>(null);
+  const [completedOverride, setCompletedOverride] = useState<boolean | null>(
+    null
+  );
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const updateTodo = useUpdateTodo();
@@ -21,6 +24,7 @@ export function TodoItem({ todo }: Props) {
   const isMutating = isUpdating || isDeleting;
 
   const isEditingLocked = todo.isCompleted || isMutating;
+  const isCompleted = completedOverride ?? todo.isCompleted;
 
   useEffect(() => {
     if (isEditing) {
@@ -29,8 +33,15 @@ export function TodoItem({ todo }: Props) {
   }, [isEditing]);
 
   const handleSave = () => {
-    if (!title.trim()) {
+    const nextTitle = title.trim();
+
+    if (!nextTitle) {
       setError("Title cannot be empty");
+      return;
+    }
+
+    if (nextTitle === todo.title) {
+      setIsEditing(false);
       return;
     }
 
@@ -41,6 +52,24 @@ export function TodoItem({ todo }: Props) {
         onError: (err: unknown) => {
           setError(getApiErrorMessage(err));
           requestAnimationFrame(() => textareaRef.current?.focus());
+        },
+      }
+    );
+  };
+
+  const handleCompletedChange = (next: boolean) => {
+    const prev = isCompleted;
+    setCompletedOverride(next);
+
+    updateTodo.mutate(
+      { ...todo, isCompleted: next },
+      {
+        onSuccess: () => {
+          setCompletedOverride(null);
+        },
+        onError: (err) => {
+          setCompletedOverride(prev);
+          setError(getApiErrorMessage(err));
         },
       }
     );
@@ -82,19 +111,16 @@ export function TodoItem({ todo }: Props) {
       className="todo-item"
       style={{
         opacity: isMutating ? 0.85 : 1,
-        transition: "opacity 120ms ease-in-out",
+        transform: isDeleting ? "scaleY(0.9)" : "scaleY(1)",
+        transformOrigin: "top",
+        transition: "opacity 120ms ease-in-out, transform 160ms ease-in-out",
       }}
     >
       <input
         type="checkbox"
-        checked={todo.isCompleted}
-        disabled={isUpdating}
-        onChange={() =>
-          updateTodo.mutate({
-            ...todo,
-            isCompleted: !todo.isCompleted,
-          })
-        }
+        checked={isCompleted}
+        disabled={isMutating || isEditing}
+        onChange={(e) => handleCompletedChange(e.target.checked)}
       />
 
       <div className="todo-body">
@@ -162,12 +188,6 @@ export function TodoItem({ todo }: Props) {
 
         {isEditing && (
           <div className="todo-edit-footer">
-            {error && (
-              <div id="todo-item-error" className="error">
-                {error}
-              </div>
-            )}
-
             <div className="todo-edit-actions">
               <button
                 className="btn btn-secondary"
@@ -185,6 +205,12 @@ export function TodoItem({ todo }: Props) {
                 Cancel
               </button>
             </div>
+          </div>
+        )}
+
+        {error && (
+          <div id="todo-item-error" className="error">
+            {error}
           </div>
         )}
       </div>

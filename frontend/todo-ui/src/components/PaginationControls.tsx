@@ -1,3 +1,5 @@
+import { DEFAULT_PAGE } from "../config/pagination";
+
 type PaginationControlsProps = {
   page: number;
   totalPages: number;
@@ -13,7 +15,7 @@ export function PaginationControls({
     <div className="pagination">
       <button
         className="btn"
-        disabled={page === 1}
+        disabled={page === DEFAULT_PAGE}
         onClick={() => onPageChange(page - 1)}
       >
         Previous

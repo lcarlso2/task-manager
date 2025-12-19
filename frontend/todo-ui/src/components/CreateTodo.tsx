@@ -61,30 +61,32 @@ export function CreateTodo({ onCreated }: CreateTodoProps) {
 
   return (
     <form className="create-todo" onSubmit={handleSubmit}>
-      <textarea
-        ref={textareaRef}
-        value={title}
-        onChange={(e) => {
-          setTitle(e.target.value);
-          if (error) setError(null);
-        }}
-        onKeyDown={handleKeyDown}
-        placeholder="New todo"
-        maxLength={200}
-        rows={4}
-        cols={40}
-        disabled={isSubmitting}
-        aria-invalid={!!error}
-        aria-describedby={error ? "create-todo-error" : undefined}
-      />
+      <div className="create-todo-inputs">
+        <textarea
+          ref={textareaRef}
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            if (error) setError(null);
+          }}
+          onKeyDown={handleKeyDown}
+          placeholder="New todo"
+          maxLength={200}
+          rows={4}
+          cols={40}
+          disabled={isSubmitting}
+          aria-invalid={!!error}
+          aria-describedby={error ? "create-todo-error" : undefined}
+        />
 
-      <button
-        className="btn btn-primary"
-        type="submit"
-        disabled={!title.trim() || isSubmitting}
-      >
-        Add
-      </button>
+        <button
+          className="btn btn-primary"
+          type="submit"
+          disabled={!title.trim() || isSubmitting}
+        >
+          Add
+        </button>
+      </div>
 
       {error && (
         <div id="create-todo-error" className="error">
