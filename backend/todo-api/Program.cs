@@ -27,7 +27,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=app.db"));
+{
+    var connectionString =
+        builder.Configuration.GetConnectionString("Default")
+        ?? "Data Source=app.db";
+
+    options.UseSqlite(connectionString);
+});
+
 
 builder.Services.AddScoped<ITodoService, TodoService>();
 
@@ -45,6 +52,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+if (app.Environment.IsEnvironment("E2E"))
+{
+    var dbPath = Path.Combine(AppContext.BaseDirectory, "e2e.db");
+    if (File.Exists(dbPath))
+    {
+        File.Delete(dbPath);
+    }
 }
 
 using (var scope = app.Services.CreateScope())

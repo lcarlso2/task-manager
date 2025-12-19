@@ -128,19 +128,22 @@ npm run test
 
 ### End-to-End Tests
 
-End-to-end tests use Playwright to validate full user flows across the frontend and backend. Tests start the frontend and backend, create todos through the UI, and verify persistence via the API. Unique test data is used to keep tests idempotent when running against a static database.
+End-to-end tests use Playwright to validate full user flows across the frontend and backend.
 
-Before running e2e tests, ensure no conflicting frontend or backend servers are running.
+Each test run starts the frontend and backend and uses an **ephemeral SQLite database** for persistence.
+The database is recreated and migrated automatically at startup and discarded when the
+test run completes, ensuring full isolation and repeatability both locally and in CI.
 
-Run e2e tests:
+E2E tests create and interact with todos exclusively through the UI and API,
+mirroring real user behavior.
+
+Before running E2E tests, ensure no conflicting frontend or backend servers are running.
+
+Run E2E tests:
 
 cd frontend\todo-ui  
 npx playwright install  
 npm run test:e2e  
-
-To run Playwright in headed mode for debugging:
-
-npm run test:e2e -- --headed  
 
 Tests can also be run via GitHub Actions using the “Run Tests” workflow in the repository’s Actions tab.
 
