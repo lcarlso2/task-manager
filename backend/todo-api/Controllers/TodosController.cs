@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using todo_api.Dtos;
-using todo_api.Entities;
 using todo_api.Enums;
 using todo_api.Mapping;
 using todo_api.Services;

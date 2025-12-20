@@ -8,7 +8,6 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:5173",
     headless: true,
-    //ignoreHTTPSErrors: true, // allow ASP.NET dev HTTPS cert
   },
 
   webServer: [

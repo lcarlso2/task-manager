@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace todo_api.Middleware;

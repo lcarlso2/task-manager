@@ -31,7 +31,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     var connectionString =
         builder.Configuration.GetConnectionString("Default")
         ?? "Data Source=app.db";
-
     options.UseSqlite(connectionString);
 });
 
@@ -54,18 +53,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-if (app.Environment.IsEnvironment("E2E"))
-{
-    var dbPath = Path.Combine(AppContext.BaseDirectory, "e2e.db");
-    if (File.Exists(dbPath))
-    {
-        File.Delete(dbPath);
-    }
-}
-
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (app.Environment.IsEnvironment("E2E"))
+    {
+        db.Database.EnsureDeleted();
+    }
+
     db.Database.Migrate();
 }
 
