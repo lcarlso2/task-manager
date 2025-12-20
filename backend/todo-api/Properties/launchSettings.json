@@ -16,7 +16,7 @@
       "applicationUrl": "http://localhost:5280",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "E2E",
-        "ConnectionStrings__Default": "Data Source=./.e2e/e2e.db"
+        "ConnectionStrings__Default": "Data Source=e2e.db"
       }
     },
     "http": {
