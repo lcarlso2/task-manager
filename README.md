@@ -121,7 +121,7 @@ cd frontend\todo-ui
 npm run test
 
 End-to-End Tests:
-End-to-end tests use Playwright to validate full user flows across the frontend and backend. Each test run starts both applications and uses an ephemeral SQLite database that is recreated and migrated at startup, then discarded at completion.
+End-to-end tests use Playwright to validate full user flows across the frontend and backend. For E2E runs, both applications are started and the SQLite database is reset on application startup by deleting and reapplying migrations, ensuring a clean state for each run.
 
 Run E2E tests:
 cd frontend\todo-ui
