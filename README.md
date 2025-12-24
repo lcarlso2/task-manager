@@ -34,9 +34,10 @@ A small, production-style full-stack Todo application built with a .NET 8 backen
 
 ## Backend Setup
 
-cd backend/todo-api
-dotnet restore
-dotnet run --launch-profile https
+- cd backend/todo-api
+- dotnet restore
+- dotnet dev-certs https --trust
+- dotnet run --launch-profile https
 
 API runs at https://localhost:7206
 Swagger UI available at https://localhost:7206/swagger
@@ -47,9 +48,9 @@ On startup, the API automatically applies EF Core migrations to the SQLite datab
 
 ## Frontend Setup
 
-cd frontend/todo-ui
-npm install
-npm run dev
+- cd frontend/todo-ui
+- npm install
+- npm run dev
 
 Create a .env file if needed:
 VITE_API_BASE_URL=https://localhost:7206/api
